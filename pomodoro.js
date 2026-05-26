@@ -9,6 +9,10 @@ const tempoTrabalhoInput = document.getElementById('tempoTrabalho');
 const tempoDescansoInput = document.getElementById('tempoDescanso');
 const faseElemento = document.getElementById('fase');
 const toggleTemaBotao = document.getElementById('toggleTema');
+const bgVideo = document.getElementById('bg-video');
+// caminhos dos vídeos (dia / noite)
+const dayVideo = 'assets/PixVerse_V6_Image_Text_540P_anime_ele_mexendo_.mp4';
+const nightVideo = 'assets/PixVerse_V6_Image_Text_540P_anime_ele_mexendonoite_.mp4';
 
 let intervaloId = null;
 let tempoAtualSegundos = 25 * 60;
@@ -110,13 +114,37 @@ function salvarConfiguracoes() {
 function alternarTema() {
 	document.body.classList.toggle('dark');
 	toggleTemaBotao.textContent = document.body.classList.contains('dark') ? 'Modo Claro' : 'Modo Noturno';
+    // atualizar vídeo de fundo para corresponder ao tema
+    atualizarVideoFundo();
 }
+
+// Troca o vídeo de fundo quando o tema é alternado
+function atualizarVideoFundo() {
+	if (!bgVideo) return;
+	const source = bgVideo.querySelector('source');
+	if (!source) return;
+	if (document.body.classList.contains('dark')) {
+		source.src = nightVideo;
+	} else {
+		source.src = dayVideo;
+	}
+	bgVideo.loop = true;
+	bgVideo.load();
+	// tentar reproduzir; ignora erro se autoplay for bloqueado
+	bgVideo.play().catch(() => {});
+}
+
+// garantir que o vídeo inicial esteja em looping e corresponda ao tema atual
+if (bgVideo) {
+	bgVideo.loop = true;
+}
+// (a troca de vídeo agora é chamada dentro de alternarTema)
 
 iniciarBotao.addEventListener('click', iniciarContagem);
 pausarBotao.addEventListener('click', pausarContagem);
 resetarBotao.addEventListener('click', resetarContagem);
 configurarBotao.addEventListener('click', alternarConfiguracoes);
 salvarConfigBotao.addEventListener('click', salvarConfiguracoes);
-toggleTemaBotao.addEventListener('click', alternarTema);
+	toggleTemaBotao.addEventListener('click', alternarTema);
 
 atualizarDisplay();
